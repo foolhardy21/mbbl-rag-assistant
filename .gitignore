@@ -1,3 +1,5 @@
 /source_material
 .venv
 .DS_Store
+.env
+chroma_data

@@ -1,25 +1,26 @@
-from langchain_community.document_loaders import PyPDFLoader
-from langchain_text_splitters import RecursiveCharacterTextSplitter
+from database import collection
+from llm import openai_client
 
-pdf_path = "./source_material/bye_laws_2016.pdf"
+question = input("Enter your question")
 
-loader = PyPDFLoader(pdf_path)
-pages = loader.load()
-pages = pages[19:252]
+ques_embedding_response = openai_client.embeddings.create(
+    model="text-embedding-3-small",
+    input=question
+)
+ques_embedding = ques_embedding_response.data[0].embedding
 
-# for i, page in enumerate(pages[:10]):
-#     print(f"Page: {i+1}")
-#     print(f"Content: {page.page_content[:100]}")
-#     print(f"Metadata: {page.metadata}")
-
-splitter = RecursiveCharacterTextSplitter(
-    chunk_size=1000,
-    chunk_overlap=100,
+results = collection.query(
+    query_embeddings=[ques_embedding],
+    n_results=3
 )
 
-chunks = splitter.split_documents(pages)
+for i in range(3):
+    metadata = results["metadatas"][0][i]
+    document = results["documents"][0][i]
+    distance = results["distances"][0][i]
 
-# for i, chunk in enumerate(chunks[:10]):
-#     print(f"\n\nChunk {i+1}")
-#     print(f"Content {chunk.page_content[:500]}")
-#     print(f"MetaData {chunk.metadata}")
+    print(f"\n--- Rank {i + 1} ---")
+    print("Page:", metadata.get("page"))
+    print("Source:", metadata.get("source"))
+    print("Distance:", distance)
+    print("Text:", document)
