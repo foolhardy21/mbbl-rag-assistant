@@ -1,26 +1,45 @@
 from database import collection
-from llm import openai_client
+from llm import get_completion, get_embeddings
 
-question = input("Enter your question")
+messages = [
+    {
+        "role": "system",
+        "content": "You are an assistant for the Model Building Bye Laws 2016. Answer the following question using only the context shared."
+    },
+]
 
-ques_embedding_response = openai_client.embeddings.create(
-    model="text-embedding-3-small",
-    input=question
-)
-ques_embedding = ques_embedding_response.data[0].embedding
+while True:
+    question = input("Enter your question:\n")
+    
+    if question.startswith("exit"):
+        break
 
-results = collection.query(
-    query_embeddings=[ques_embedding],
-    n_results=3
-)
+    ques_embedding = get_embeddings(question)
+    results = collection.query(
+        query_embeddings=[ques_embedding],
+        n_results=3
+    )
+    retrieved_data = results["documents"][0]
 
-for i in range(3):
-    metadata = results["metadatas"][0][i]
-    document = results["documents"][0][i]
-    distance = results["distances"][0][i]
+    prompt = f"""
+        The context is:
+        {retrieved_data}
+        The question is: {question}
+    """
+    messages.append({"role": "user", "content": prompt})
 
-    print(f"\n--- Rank {i + 1} ---")
-    print("Page:", metadata.get("page"))
-    print("Source:", metadata.get("source"))
-    print("Distance:", distance)
-    print("Text:", document)
+    answer = get_completion(messages)
+    print(f"\n{answer}\n")
+
+    messages.append({ "role": "assistant", "content": answer })
+
+# for i in range(3):
+#     metadata = results["metadatas"][0][i]
+#     document = results["documents"][0][i]
+#     distance = results["distances"][0][i]
+
+#     print(f"\n--- Rank {i + 1} ---")
+#     print("Page:", metadata.get("page"))
+#     print("Source:", metadata.get("source"))
+#     print("Distance:", distance)
+#     print("Text:", document)

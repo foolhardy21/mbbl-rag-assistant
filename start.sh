@@ -5,6 +5,6 @@ source .venv/bin/activate
 
 pip install -r requirements.txt
 
-# docker-compose up -d
+docker-compose up -d
 
 python main.py

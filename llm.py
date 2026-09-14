@@ -7,3 +7,17 @@ load_dotenv()
 openai_client = OpenAI(
     api_key=os.getenv("OPENAI_API_KEY")
 )
+
+def get_embeddings(text: str):
+    response = openai_client.embeddings.create(
+        model="text-embedding-3-small",
+        input=text
+    )
+    return response.data[0].embedding
+
+def get_completion(messages):
+    response = openai_client.chat.completions.create(
+        model="gpt-5-mini",
+        messages=messages
+    )
+    return response.choices[0].message.content
