@@ -3,7 +3,7 @@ from langchain_text_splitters import RecursiveCharacterTextSplitter
 from database import collection
 from llm import openai_client
 
-pdf_path = "./source_material/bye_laws_2016.pdf"
+pdf_path = "./ingest/bye_laws_2016.pdf"
 
 loader = PyPDFLoader(pdf_path)
 pages = loader.load()
