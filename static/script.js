@@ -1,8 +1,15 @@
 const questionInput = document.getElementById("question");
 const sendButton = document.getElementById("send");
 const chat = document.getElementById("chat");
+const infoBtn = document.getElementById("info-btn");
+const infoModal = document.getElementById("info-modal");
 
 let conversation = [];
+
+infoBtn.addEventListener("click", () => infoModal.showModal());
+infoModal.addEventListener("click", (event) => {
+    if (event.target === infoModal) infoModal.close();
+});
 
 sendButton.addEventListener("click", sendMessage);
 questionInput.addEventListener("keydown", (event) => {
