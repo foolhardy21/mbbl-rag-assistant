@@ -1,45 +1,35 @@
-from database import collection
-from llm import get_completion, get_embeddings
+from flask import Flask, Response, jsonify, render_template, request
+from rag import ask, ask_stream
 
-messages = [
-    {
-        "role": "system",
-        "content": "You are an assistant for the Model Building Bye Laws 2016. Answer the following question using only the context shared."
-    },
-]
+app = Flask(__name__)
 
-while True:
-    question = input("Enter your question:\n")
+@app.route("/", methods=["GET"])
+def get_index():
+    return render_template("index.html")
+
+@app.route("/ask", methods=["POST"])
+def ask_question():
+    data = request.get_json()
+
+    if not data:
+        return jsonify({"message": "Request body must be valid."}), 400
+    if not data.get("conversation"):
+        return jsonify({"message": "Invalid message."}), 400
     
-    if question.startswith("exit"):
-        break
-
-    ques_embedding = get_embeddings(question)
-    results = collection.query(
-        query_embeddings=[ques_embedding],
-        n_results=3
+    sent_conversation = data["conversation"]
+    def generate():
+        for chunk in ask_stream(sent_conversation):
+            yield chunk
+    return Response(
+        generate(),
+        mimetype="text/plain"
     )
-    retrieved_data = results["documents"][0]
+    # updated_conversation = ask(sent_conversation)
+    # return jsonify({
+    #     "data": {
+    #         "conversation": updated_conversation
+    #     }
+    #     }), 200
 
-    prompt = f"""
-        The context is:
-        {retrieved_data}
-        The question is: {question}
-    """
-    messages.append({"role": "user", "content": prompt})
-
-    answer = get_completion(messages)
-    print(f"\n{answer}\n")
-
-    messages.append({ "role": "assistant", "content": answer })
-
-# for i in range(3):
-#     metadata = results["metadatas"][0][i]
-#     document = results["documents"][0][i]
-#     distance = results["distances"][0][i]
-
-#     print(f"\n--- Rank {i + 1} ---")
-#     print("Page:", metadata.get("page"))
-#     print("Source:", metadata.get("source"))
-#     print("Distance:", distance)
-#     print("Text:", document)
+if __name__ == "__main__":
+    app.run(port=5000, debug=True)

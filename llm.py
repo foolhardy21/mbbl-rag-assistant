@@ -21,3 +21,14 @@ def get_completion(messages):
         messages=messages
     )
     return response.choices[0].message.content
+
+def get_completion_steam(messages):
+    stream = openai_client.chat.completions.create(
+        model="gpt-5-mini",
+        messages=messages,
+        stream=True
+    )
+    for chunk in stream:
+        content = chunk.choices[0].delta.content
+        if content:
+            yield content

@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Building Bye-Laws Assistant</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+        href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600&family=Work+Sans:wght@400;500;600&display=swap"
+        rel="stylesheet" />
+    <link rel="stylesheet" href="/static/styles.css" />
+</head>
+
+<body>
+    <header class="top-bar">
+        <div class="top-bar-text">
+            <h1>Model Building Bye-Laws 2016</h1>
+            <p class="meta">
+                <span class="status-dot"></span>
+                Indexed · PDF Assistant
+            </p>
+        </div>
+    </header>
+
+    <main class="chat-container">
+        <div id="chat" class="chat-stream"></div>
+    </main>
+
+    <div class="composer-dock">
+        <div class="input-container">
+            <input id="question" type="text" placeholder="Ask a question about the bye-laws..." autocomplete="off" />
+            <button id="send" type="button">Ask</button>
+        </div>
+    </div>
+
+    <script src="/static/script.js"></script>
+</body>
+
+</html>
