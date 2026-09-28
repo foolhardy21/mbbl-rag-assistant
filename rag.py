@@ -40,13 +40,34 @@ def ask_stream(conversation):
         query_embeddings=[ques_embedding],
         n_results=3
     )
-    retrieved_data = results["documents"][0]
-    
+    context = ""
+    context_arr = []
+    for idx in range(3):
+        if results["distances"][0][idx] < 1.0:
+            context_arr.append({
+                "content": results["documents"][0][idx],
+                "metadata": results["metadatas"][0][idx],
+                "distance": results["distances"][0][idx],
+            })
+
+    if len(context_arr) == 0:
+        yield "No idea."
+        return
+
+    for context_obj in context_arr:
+        print(context_obj)
+        context += f"""
+            The chunk is - {context_obj["content"]}
+            The metadata is - {context_obj["metadata"]}
+            The nearest distance is - {context_obj["distance"]}
+            """
+    print(context)
     prompt = f"""
-    The context is:
-    {retrieved_data}
     The question is:
     {question}
+    The context is:
+    {context}
+    Give your response based on the context shared about each chunk.
     """
 
     if len(conversation) == 0:
@@ -58,12 +79,3 @@ def ask_stream(conversation):
     for chunk in get_completion_steam(conversation):
         answer += chunk
         yield chunk
-    conversation.append({
-        "role": "assistant",
-        "content": answer
-    }) 
-
-# for i in range(3):
-#     metadata = results["metadatas"][0][i]
-#     document = results["documents"][0][i]
-#     distance = results["distances"][0][i]
