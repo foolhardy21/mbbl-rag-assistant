@@ -195,11 +195,38 @@ body {
     font-family: var(--font-display);
     font-size: 1.05rem;
     line-height: 1.65;
-    white-space: pre-wrap;
     min-height: 3rem;
+    min-width: 0;
+    overflow-wrap: break-word;
 }
 
-.assistant-message:empty::after {
+.page-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+    margin-bottom: 0.65rem;
+}
+
+.page-list:empty {
+    display: none;
+}
+
+.page-chip {
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    letter-spacing: 0.04em;
+    color: var(--primary);
+    background: var(--primary-soft);
+    border-radius: var(--radius);
+    padding: 0.15rem 0.45rem;
+}
+
+.answer-text {
+    white-space: pre-wrap;
+    overflow-wrap: break-word;
+}
+
+.answer-text:empty::after {
     content: "▋";
     color: var(--primary);
     animation: cursor-pulse 1.05s infinite;

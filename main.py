@@ -1,5 +1,5 @@
 from flask import Flask, Response, jsonify, render_template, request
-from rag import ask, ask_stream
+from rag import ask_stream
 
 app = Flask(__name__)
 
@@ -19,10 +19,10 @@ def ask_question():
     sent_conversation = data["conversation"]
     def generate():
         for chunk in ask_stream(sent_conversation):
-            yield chunk
+            yield f"data: {chunk}\n\n"
     return Response(
         generate(),
-        mimetype="text/plain"
+        mimetype="text/event-steam"
     )
     # updated_conversation = ask(sent_conversation)
     # return jsonify({
@@ -32,4 +32,4 @@ def ask_question():
     #     }), 200
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5000, debug=False)
+    app.run(host="0.0.0.0", port=5001, debug=False)

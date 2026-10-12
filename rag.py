@@ -49,19 +49,19 @@ def ask_stream(conversation):
                 "metadata": results["metadatas"][0][idx],
                 "distance": results["distances"][0][idx],
             })
+            yield f"{results['metadatas'][0][idx]}\n\n"
 
     if len(context_arr) == 0:
         yield "No idea."
         return
 
     for context_obj in context_arr:
-        print(context_obj)
         context += f"""
             The chunk is - {context_obj["content"]}
             The metadata is - {context_obj["metadata"]}
             The nearest distance is - {context_obj["distance"]}
             """
-    print(context)
+
     prompt = f"""
     The question is:
     {question}
